@@ -1,14 +1,16 @@
 "use client";
-import { PostItem } from "@/app/blog/[id]/page";
-import { usePosts } from "@/store";
+import { getPostsBySearch } from "@/services/getPosts";
 import { FormEventHandler, useState } from "react";
+import useSWR from "swr";
 
 export const PostSearch = () => {
+	const { mutate } = useSWR("posts");
 	const { 0: search, 1: setSearch } = useState("");
-	const getPostsBySearch = usePosts((state) => state.getPostsBySearch);
 	const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
 		event.preventDefault();
-		getPostsBySearch(search);
+		getPostsBySearch(search).then((posts) => {
+			mutate(posts);
+		});
 	};
 	return (
 		<form
