@@ -14,7 +14,6 @@ type Props = {
 
 const Navigation = ({ navLinks }: Props) => {
 	const pathname = usePathname();
-	console.log(navLinks.map((link) => link.label));
 	return (
 		<>
 			{navLinks.map((link) => (

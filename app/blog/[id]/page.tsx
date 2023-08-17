@@ -6,7 +6,7 @@ type Props = {
 	};
 };
 
-async function getData(id: string): Promise<Post> {
+async function getData(id: string): Promise<PostItem> {
 	const response = await fetch(
 		`https://jsonplaceholder.typicode.com/posts/${id}`,
 		{
@@ -36,7 +36,7 @@ export default async function Post({ params: { id } }: Props) {
 	);
 }
 
-export type Post = {
+export type PostItem = {
 	userId: number;
 	id: number;
 	title: string;

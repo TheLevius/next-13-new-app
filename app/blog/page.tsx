@@ -1,6 +1,10 @@
+"use client";
 import { Metadata } from "next";
-import Link from "next/link";
-import { Post } from "./[id]/page";
+import { useEffect, useState } from "react";
+import { getAllPosts } from "@/services/getPosts";
+import { PostItem } from "./[id]/page";
+import { Posts } from "@/components/Posts";
+import { PostSearch } from "@/components/PostSearch";
 
 async function getData() {
 	const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -11,22 +15,30 @@ async function getData() {
 	return response.json();
 }
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
 	title: "Blog | Next App",
 };
 
-export default async function Blog() {
-	const posts = await getData();
+export default function Blog() {
+	const { 0: posts, 1: setPosts } = useState<PostItem[]>([]);
+	const { 0: loading, 1: setLoading } = useState<boolean>(true);
+
+	useEffect(() => {
+		getAllPosts()
+			.then(setPosts)
+			.finally(() => {
+				setLoading(false);
+			});
+	}, []);
 	return (
 		<>
 			<h1 className="flex flex-col items-center">Blog page</h1>
-			<ul className="flex flex-col px-32 py-16">
-				{posts.map((post: Post) => (
-					<li key={post.id} className="py-2">
-						<Link href={`/blog/${post.id}`}>{post.title}</Link>
-					</li>
-				))}
-			</ul>
+			<PostSearch
+				onSearch={(downloadedPosts: PostItem[]) =>
+					setPosts(downloadedPosts)
+				}
+			/>
+			{loading ? <h3>Loading...</h3> : <Posts posts={posts} />}
 		</>
 	);
 }
